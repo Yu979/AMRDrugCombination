@@ -8,6 +8,7 @@ smiles = np.array(df['SMILES']).tolist()
 featurizer = dc.feat.CircularFingerprint()
 print('start creating features...')
 feature = featurizer.featurize(smiles)
-df['feature'] = feature
-df.to_csv('./data/drug_feature.csv')
+# df['feature'] = feature
+# df.to_csv('./data/drug_feature.csv')
+print(feature)
 print('end')
