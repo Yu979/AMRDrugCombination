@@ -5,6 +5,9 @@ import numpy as np
 df = pd.read_csv('./data/drug_SMILES.csv')
 smiles1 = np.array(df['SMILES']).tolist()
 # create feature extractor
-# featurizer = dc.feat.CircularFingerprint()
-# feature = featurizer.featurize(smiles)
-print(1)
+featurizer = dc.feat.CircularFingerprint()
+print('start creating features...')
+feature = featurizer.featurize(smiles)
+df['feature'] = feature
+df.to_csv('./data/drug_feature.csv')
+print('end')
