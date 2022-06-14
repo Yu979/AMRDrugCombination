@@ -11,4 +11,5 @@ feature = featurizer.featurize(smiles)
 # df['feature'] = feature
 # df.to_csv('./data/drug_feature.csv')
 print(feature)
+print((np.array(feature)).shape)
 print('end')
