@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import pickle
 import gzip
-
+from pretrain_data_process import *
 import matplotlib.pyplot as plt
 import keras as K
 import tensorflow as tf
@@ -16,7 +16,7 @@ from keras.layers import Dense, Dropout
 os.environ["CUDA_VISIBLE_DEVICES"] = "0" #specify GPU
 
 
-hyperparameter_file = 'hyperparameters'  # textfile which contains the hyperparameters of the model
+hyperparameter_file = './config/hyperparameters.txt'  # textfile which contains the hyperparameters of the model
 data_file = 'data_test_fold0_tanh.p.gz'  # pickle file which contains the data (produced with normalize.ipynb)
 
 
