@@ -82,8 +82,12 @@ def test(model, X_train, y_train, X_test, y_test):
 if __name__ == '__main__':
     cell_line_dict = build_cell_line_dict(cell_path)
     drug_dict = build_drug_dict(smiles_path, drug_path)
-    # drug1_feature, drug2_feature, cell_line, label =
-    X_train, X_test, X_val, y_train, y_test, y_val = build_dataset(build_pretrain_Xy(build_pretrain_data(cell_line_dict, drug_dict, pretrain_drug_path)))
+    drug1_feature, drug2_feature, cell_line, label = build_pretrain_data(cell_line_dict, drug_dict, pretrain_drug_path)
+    del drug_dict, cell_line_dict
+    X, y = build_pretrain_Xy(drug1_feature, drug2_feature, cell_line, label)
+    del drug1_feature, drug2_feature, cell_line, label
+    X_train, X_test, X_val, y_train, y_test, y_val = build_dataset(X, y)
+    del X, y
     model = build_model(hyperparameter_path)
     hist_train = train(model, hyperparameter_path, X_train, y_train, X_val, y_val)
     val_loss = hist_train.history['val_loss']
