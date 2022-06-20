@@ -43,7 +43,14 @@ def build_dataset(X, y):
     return X_tr, X_test, X_val, y_tr, y_test, y_val
 
 
-def build_model(hyperparameter_path):
+def build_model(X_tr):
+    layers = [8182, 4096, 1]
+    epochs = 1000
+    act_func = tf.nn.relu
+    dropout = 0.5
+    input_dropout = 0.2
+    eta = 0.00001
+    norm = 'tanh'
     exec(open(hyperparameter_path).read())
     config = tf.compat.v1.ConfigProto(
         allow_soft_placement=True,
@@ -64,8 +71,14 @@ def build_model(hyperparameter_path):
     return model
 
 
-def train(model, hyperparameter_path, X_train, y_train, X_val, y_val):
-    exec(open(hyperparameter_path).read())
+def train(model, X_train, y_train, X_val, y_val):
+    layers = [8182, 4096, 1]
+    epochs = 1000
+    act_func = tf.nn.relu
+    dropout = 0.5
+    input_dropout = 0.2
+    eta = 0.00001
+    norm = 'tanh'
     # run model for hyperparameter selection
     hist1 = model.fit(X_train, y_train, epochs=epochs, shuffle=True, batch_size=64, validation_data=(X_val, y_val))
     return hist1
@@ -89,8 +102,8 @@ if __name__ == '__main__':
     del drug1_feature, drug2_feature, cell_line, label
     X_train, X_test, X_val, y_train, y_test, y_val = build_dataset(X, y)
     del X, y
-    model = build_model(hyperparameter_path)
-    hist_train = train(model, hyperparameter_path, X_train, y_train, X_val, y_val)
+    model = build_model(X_train)
+    hist_train = train(model, X_train, y_train, X_val, y_val)
     val_loss = hist_train.history['val_loss']
     model.reset_states()
     hist_test = test(model, X_train, y_train, X_test, y_test)
