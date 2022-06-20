@@ -5,3 +5,4 @@ pretrained
 work_space
 .idea
 *.pyc
+**/__pycache__
