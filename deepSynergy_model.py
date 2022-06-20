@@ -33,13 +33,13 @@ def moving_average(a, n=3):
 def build_dataset(X, y):
     # Load data
     X_tr, X_test, y_tr, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
-    X_train, X_val, y_train, y_val = train_test_split(X_tr, y_tr, test_size=0.25, random_state=1)
+    X_tr, X_val, y_tr, y_val = train_test_split(X_tr, y_tr, test_size=0.25, random_state=1)
     # tr = 60% of data for training during hyperparameter selection
     # val = 20% of data for validation during hyperparameter selection
     #
     # train = tr + val = 80% of data for training during final testing
     # test = remaining left out 20% of data for unbiased testing
-    return X_train, X_test, X_val, y_train, y_test, y_val
+    return X_tr, X_test, X_val, y_tr, y_test, y_val
 
 
 def build_model(hyperparameter_path):
@@ -82,9 +82,8 @@ def test(model, X_train, y_train, X_test, y_test):
 if __name__ == '__main__':
     cell_line_dict = build_cell_line_dict(cell_path)
     drug_dict = build_drug_dict(smiles_path, drug_path)
-    drug1_feature, drug2_feature, cell_line, label = build_pretrain_data(cell_line_dict, drug_dict, pretrain_drug_path)
-    X, y = build_pretrain_Xy(drug1_feature, drug2_feature, cell_line, label)
-    X_train, X_test, X_val, y_train, y_test, y_val = build_dataset(X, y)
+    # drug1_feature, drug2_feature, cell_line, label =
+    X_train, X_test, X_val, y_train, y_test, y_val = build_dataset(build_pretrain_Xy(build_pretrain_data(cell_line_dict, drug_dict, pretrain_drug_path)))
     model = build_model(hyperparameter_path)
     hist_train = train(model, hyperparameter_path, X_train, y_train, X_val, y_val)
     val_loss = hist_train.history['val_loss']
