@@ -45,10 +45,10 @@ def build_dataset(X, y):
 
 def build_model(hyperparameter_path):
     exec(open(hyperparameter_path).read())
-    config = tf.ConfigProto(
+    config = tf.compat.v1.ConfigProto(
         allow_soft_placement=True,
-        gpu_options=tf.GPUOptions(allow_growth=True))
-    set_session(tf.Session(config=config))
+        gpu_options=tf.compat.v1.GPUOptions(allow_growth=True))
+    set_session(tf.compat.v1.Session(config=config))
     model = Sequential()
     for i in range(len(layers)):
         if i==0:
