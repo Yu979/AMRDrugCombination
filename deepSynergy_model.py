@@ -13,7 +13,7 @@ from tensorflow.python.keras.backend import set_session
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0" #specify GPU
+os.environ["CUDA_VISIBLE_DEVICES"] = "0, 2" #specify GPU
 cell_path = './data/DATABASE/comb_data.csv'
 smiles_path = './data/CFfeature.npy'
 drug_path = './data/drug_feature.csv'
