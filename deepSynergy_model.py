@@ -14,6 +14,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0, 2" #specify GPU
+TF_ENABLE_ONEDNN_OPTS=0
 cell_path = './data/DATABASE/comb_data.csv'
 smiles_path = './data/CFfeature.npy'
 drug_path = './data/drug_feature.csv'
