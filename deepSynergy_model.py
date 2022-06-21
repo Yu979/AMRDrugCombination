@@ -60,14 +60,14 @@ def build_model(X_tr):
     for i in range(len(layers)):
         if i==0:
             model.add(Dense(layers[i], input_shape=(X_tr.shape[1],), activation=act_func,
-                            kernel_initializer='he_normal'))
+                           ))
             model.add(Dropout(float(input_dropout)))
         elif i==len(layers)-1:
-            model.add(Dense(layers[i], activation='softmax', kernel_initializer="he_normal"))
+            model.add(Dense(layers[i], activation='softmax'))
         else:
-            model.add(Dense(layers[i], activation=act_func, kernel_initializer="he_normal"))
+            model.add(Dense(layers[i], activation=act_func))
             model.add(Dropout(float(dropout)))
-    model.compile(loss='mean_squared_error', optimizer=K.optimizers.SGD(lr=float(eta), momentum=0.5), metrics=K.metrics.categorical_accuracy)
+    model.compile(loss='categorical_crossentropy', optimizer=K.optimizers.SGD(lr=float(eta), momentum=0.5), metrics=K.metrics.categorical_accuracy)
     return model
 
 

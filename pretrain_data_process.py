@@ -62,7 +62,7 @@ def build_pretrain_Xy(drug1_feature, drug2_feature, cell_line, label):
     cell_line = np.array(cell_line)
     cell_line = to_categorical(cell_line, 2001)
     X = np.hstack((drug1_feature, drug2_feature, cell_line))
-    y = np.array(label)
+    y = np.array(to_categorical(label, 3))
     return X, y
 
 
