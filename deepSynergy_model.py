@@ -44,12 +44,12 @@ def build_dataset(X, y):
 
 
 def build_model(X_tr):
-    layers = [8182, 4096, 1]
-    epochs = 1000
+    layers = [8182, 4096, 3]
+    epochs = 100
     act_func = tf.nn.relu
     dropout = 0.5
     input_dropout = 0.2
-    eta = 0.00001
+    eta = 0.0001
     norm = 'tanh'
     exec(open(hyperparameter_path).read())
     config = tf.compat.v1.ConfigProto(
@@ -63,33 +63,37 @@ def build_model(X_tr):
                             kernel_initializer='he_normal'))
             model.add(Dropout(float(input_dropout)))
         elif i==len(layers)-1:
-            model.add(Dense(layers[i], activation='linear', kernel_initializer="he_normal"))
+            model.add(Dense(layers[i], activation='softmax', kernel_initializer="he_normal"))
         else:
             model.add(Dense(layers[i], activation=act_func, kernel_initializer="he_normal"))
             model.add(Dropout(float(dropout)))
-    model.compile(loss='mean_squared_error', optimizer=K.optimizers.SGD(lr=float(eta), momentum=0.5))
+    model.compile(loss='mean_squared_error', optimizer=K.optimizers.SGD(lr=float(eta), momentum=0.5), metrics=K.metrics.categorical_accuracy)
     return model
 
 
 def train(model, X_train, y_train, X_val, y_val):
     layers = [8182, 4096, 1]
-    epochs = 1000
+    epochs = 100
+    batch_size = 64
     act_func = tf.nn.relu
     dropout = 0.5
     input_dropout = 0.2
-    eta = 0.00001
+    eta = 0.0001
     norm = 'tanh'
     # run model for hyperparameter selection
-    hist1 = model.fit(X_train, y_train, epochs=epochs, shuffle=True, batch_size=64, validation_data=(X_val, y_val))
+    steps_per_epoch = len(X_train) // (batch_size)
+    hist1 = model.fit(X_train, y_train, epochs=epochs, shuffle=True, batch_size=batch_size, validation_data=(X_val, y_val), steps_per_epoch=steps_per_epoch)
     return hist1
 
 
 def test(model, X_train, y_train, X_test, y_test):
     average_over = 15
+    batch_size = 64
+    steps_per_epoch = len(X_train) // (batch_size)
     mov_av = moving_average(np.array(val_loss), average_over)
     smooth_val_loss = np.pad(mov_av, int(average_over / 2), mode='edge')
     epo = np.argmin(smooth_val_loss)
-    hist2 = model.fit(X_train, y_train, epochs=epo, shuffle=True, batch_size=64, validation_data=(X_test, y_test))
+    hist2 = model.fit(X_train, y_train, epochs=epo, shuffle=True, batch_size=64, validation_data=(X_test, y_test), steps_per_epoch=steps_per_epoch)
     return hist2
 
 
