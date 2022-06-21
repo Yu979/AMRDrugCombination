@@ -104,11 +104,13 @@ if __name__ == '__main__':
     del drug_dict, cell_line_dict
     X, y = build_pretrain_Xy(drug1_feature, drug2_feature, cell_line, label)
     del drug1_feature, drug2_feature, cell_line, label
+    # for X, y in zip(np.array_split(X, 100), np.array_split(y, 100)):
     X_train, X_test, X_val, y_train, y_test, y_val = build_dataset(X, y)
     del X, y
     model = build_model(X_train)
     hist_train = train(model, X_train, y_train, X_val, y_val)
     val_loss = hist_train.history['val_loss']
     model.reset_states()
+    model.save('./model/NNpretrain.h5')
     hist_test = test(model, X_train, y_train, X_test, y_test)
     test_loss = hist_test.history['val_loss']
