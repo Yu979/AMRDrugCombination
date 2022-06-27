@@ -33,27 +33,27 @@ def build_finetune_combdata(combpath):
     for index, row in df.iterrows():
         # print(row['E. coli BW25113'])
         if row['E. coli BW25113'] == 'Synergy':
-            df2.loc[len(df2.index)] = [row['Drug 1'], row['Drug 2'], cell_line_dict['E. coli BW25113'], 1]
+            df2.loc[len(df2.index)] = [row['Drug 1'], row['Drug 2'], cell_line_dict['E. coli BW25113'], 2]
         elif row['E. coli BW25113'] == 'Antagonism':
             df2.loc[len(df2.index)] = [row['Drug 1'], row['Drug 2'], cell_line_dict['E. coli BW25113'], 0]
         if row['E. coli iAi1'] == 'Synergy':
-            df2.loc[len(df2.index)] = [row['Drug 1'], row['Drug 2'], cell_line_dict['E. coli iAi1'], 1]
+            df2.loc[len(df2.index)] = [row['Drug 1'], row['Drug 2'], cell_line_dict['E. coli iAi1'], 2]
         elif row['E. coli iAi1'] == 'Antagonism':
             df2.loc[len(df2.index)] = [row['Drug 1'], row['Drug 2'], cell_line_dict['E. coli iAi1'], 0]
         if row['ST LT2'] == 'Synergy':
-            df2.loc[len(df2.index)] = [row['Drug 1'], row['Drug 2'], cell_line_dict['ST LT2'], 1]
+            df2.loc[len(df2.index)] = [row['Drug 1'], row['Drug 2'], cell_line_dict['ST LT2'], 2]
         elif row['ST LT2'] == 'Antagonism':
             df2.loc[len(df2.index)] = [row['Drug 1'], row['Drug 2'], cell_line_dict['ST LT2'], 0]
         if row['ST14028'] == 'Synergy':
-            df2.loc[len(df2.index)] = [row['Drug 1'], row['Drug 2'], cell_line_dict['ST14028'], 1]
+            df2.loc[len(df2.index)] = [row['Drug 1'], row['Drug 2'], cell_line_dict['ST14028'], 2]
         elif row['ST14028'] == 'Antagonism':
             df2.loc[len(df2.index)] = [row['Drug 1'], row['Drug 2'], cell_line_dict['ST14028'], 0]
         if row['PAO1'] == 'Synergy':
-            df2.loc[len(df2.index)] = [row['Drug 1'], row['Drug 2'], cell_line_dict['PAO1'], 1]
+            df2.loc[len(df2.index)] = [row['Drug 1'], row['Drug 2'], cell_line_dict['PAO1'], 2]
         elif row['PAO1'] == 'Antagonism':
             df2.loc[len(df2.index)] = [row['Drug 1'], row['Drug 2'], cell_line_dict['PAO1'], 0]
         if row['PA14'] == 'Synergy':
-            df2.loc[len(df2.index)] = [row['Drug 1'], row['Drug 2'], cell_line_dict['PA14'], 1]
+            df2.loc[len(df2.index)] = [row['Drug 1'], row['Drug 2'], cell_line_dict['PA14'], 2]
         elif row['PA14'] == 'Antagonism':
             df2.loc[len(df2.index)] = [row['Drug 1'], row['Drug 2'], cell_line_dict['PA14'], 0]
     return df2
@@ -68,27 +68,27 @@ def build_finetune_singledata(single_path):
     df2 = pd.DataFrame(columns=['drug1', 'drug2', 'cell_line', 'label'])
     for index, row in df.iterrows():
         if row['E. coli BW25113'] == 'S':
-            df2.loc[len(df2.index)] = [row['Drug'], '', cell_line_dict['E. coli BW25113'], 1]
+            df2.loc[len(df2.index)] = [row['Drug'], '', cell_line_dict['E. coli BW25113'], 2]
         elif row['E. coli BW25113'] == 'R':
             df2.loc[len(df2.index)] = [row['Drug'], '', cell_line_dict['E. coli BW25113'], 0]
         if row['E. coli iAi1'] == 'S':
-            df2.loc[len(df2.index)] = [row['Drug'], '', cell_line_dict['E. coli iAi1'], 1]
+            df2.loc[len(df2.index)] = [row['Drug'], '', cell_line_dict['E. coli iAi1'], 2]
         elif row['E. coli iAi1'] == 'R':
             df2.loc[len(df2.index)] = [row['Drug'], '', cell_line_dict['E. coli iAi1'], 0]
         if row['ST LT2'] == 'S':
-            df2.loc[len(df2.index)] = [row['Drug'], '', cell_line_dict['ST LT2'], 1]
+            df2.loc[len(df2.index)] = [row['Drug'], '', cell_line_dict['ST LT2'], 2]
         elif row['ST LT2'] == 'R':
             df2.loc[len(df2.index)] = [row['Drug'], '', cell_line_dict['ST LT2'], 0]
         if row['ST14028'] == 'S':
-            df2.loc[len(df2.index)] = [row['Drug'], '', cell_line_dict['ST14028'], 1]
+            df2.loc[len(df2.index)] = [row['Drug'], '', cell_line_dict['ST14028'], 2]
         elif row['ST14028'] == 'R':
             df2.loc[len(df2.index)] = [row['Drug'], '', cell_line_dict['ST14028'], 0]
         if row['PAO1'] == 'S':
-            df2.loc[len(df2.index)] = [row['Drug'], '', cell_line_dict['PAO1'], 1]
+            df2.loc[len(df2.index)] = [row['Drug'], '', cell_line_dict['PAO1'], 2]
         elif row['PAO1'] == 'R':
             df2.loc[len(df2.index)] = [row['Drug'], '', cell_line_dict['PAO1'], 0]
         if row['PA14'] == 'S':
-            df2.loc[len(df2.index)] = [row['Drug'], '', cell_line_dict['PA14'], 1]
+            df2.loc[len(df2.index)] = [row['Drug'], '', cell_line_dict['PA14'], 2]
         elif row['PA14'] == 'R':
             df2.loc[len(df2.index)] = [row['Drug'], '', cell_line_dict['PA14'], 0]
     return df2
@@ -114,6 +114,7 @@ def build_finetune_xy(comb_data, single_data, drug_dic):
             cell_lines.append(m)
             labels.append(n)
     cell_lines = to_categorical(cell_lines, 2001)
+    labels = to_categorical(labels, 3)
     finetune_X = np.hstack((drug1_features, drug2_features, cell_lines))
     finetune_Y = np.array(labels)
     return finetune_X, finetune_Y
@@ -167,7 +168,7 @@ if __name__ == '__main__':
     for layer in pretrain_model.layers[:2]:
         layer.trainable = False
     eta = 0.001
-    pretrain_model.compile(loss='binary_crossentropy', optimizer=K.optimizers.SGD(lr=float(eta), momentum=0.5), metrics=K.metrics.binary_accuracy)
+    pretrain_model.compile(loss='categorical_crossentropy', optimizer=K.optimizers.SGD(lr=float(eta), momentum=0.5), metrics=K.metrics.categorical_accuracy)
     hist_train = train(pretrain_model, X_train, y_train, X_val, y_val)
     val_loss = hist_train.history['val_loss']
     pretrain_model.reset_states()
