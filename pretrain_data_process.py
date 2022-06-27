@@ -35,7 +35,8 @@ def build_pretrain_data(cell_line_dict, drug_dict, pretrain_drug_path):
     cell_line = []
     label = []
     pretrain_drug_df = pd.read_csv(pretrain_drug_path)
-
+    # set samples number
+    pretrain_drug_df = pretrain_drug_df.sample(n=100000, random_state=50)
     for s, r, m, n in zip(pretrain_drug_df['drug1'], pretrain_drug_df['drug2'], pretrain_drug_df['cell_line_number'], pretrain_drug_df['label']):
         if (pd.isna(r)) and (s in drug_dict):
             drug2_feature.append(np.zeros(1024))
@@ -44,7 +45,7 @@ def build_pretrain_data(cell_line_dict, drug_dict, pretrain_drug_path):
             label.append(n)
         elif (s in drug_dict) and (r in drug_dict):
             drug1_feature.append(drug_dict[s])
-            drug2_feature.append(drug_dict[s])
+            drug2_feature.append(drug_dict[r])
             cell_line.append(m)
             label.append(n)
     # for s in pretrain_drug_df['drug2']:
