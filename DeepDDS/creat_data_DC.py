@@ -64,6 +64,15 @@ def smile_to_graph(smile):
     return c_size, features, edge_index
 
 
+def drug_smiles_dict(smiles_path):
+    df = pd.read_csv(smiles_path)
+    smiles = df['SMILES'].values
+    drug = df['Drug'].values
+    smiles_vec = dict(zip(drug, smiles))
+
+    return smiles_vec
+
+
 def creat_data(datafile, cell_path, smiles_path, drug_path):
     # file2 = cellfile
     # cell_features = []
@@ -72,7 +81,7 @@ def creat_data(datafile, cell_path, smiles_path, drug_path):
     #     for row in csv_reader:
     #         cell_features.append(row)
     cell_line_dict = build_cell_line_dict(cell_path)
-    drug_dict = build_drug_dict(smiles_path, drug_path)
+    drug_dict = drug_smiles_dict(smiles_path)
     pretrain_drug_df = pd.read_csv(datafile)
     pretrain_drug_df = pretrain_drug_df.drop_duplicates(subset=['drug1', 'drug2'], keep="last")
     # set samples number
@@ -116,10 +125,10 @@ def creat_data(datafile, cell_path, smiles_path, drug_path):
 
 if __name__ == "__main__":
     # datafile = 'prostate'
-    cell_path = './data/DATABASE/comb_data.csv'
-    smiles_path = './data/CFfeature.npy'
-    drug_path = './data/drug_feature.csv'
-    pretrain_drug_path = './data/DATABASE/comb_data.csv'
-    cell_name_path = './data/drugcomb_cell_lines.txt'
+    cell_path = '../data/DATABASE/comb_data.csv'
+    smiles_path = '../data/drug_SMILES.csv'
+    drug_path = '../data/drug_feature.csv'
+    pretrain_drug_path = '../data/DATABASE/comb_data.csv'
+    cell_name_path = '../data/drugcomb_cell_lines.txt'
 
     creat_data(pretrain_drug_path, cell_path, smiles_path, drug_path)
