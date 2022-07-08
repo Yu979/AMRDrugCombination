@@ -95,6 +95,7 @@ def creat_data(datafile, cell_path, smiles_path, drug_path):
     # df = pd.read_csv('data\smiles.csv')
     compound_iso_smiles = list(drug_dict.values())
     compound_iso_smiles = set(compound_iso_smiles)
+    compound_iso_smiles.pop()
     smile_graph = {}
     print('compound_iso_smiles', compound_iso_smiles)
     for smile in compound_iso_smiles:
