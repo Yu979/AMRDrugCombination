@@ -45,7 +45,7 @@ def build_pretrain_data(cell_line_dict, drug_dict, pretrain_drug_path):
     cell_line = []
     label = []
     pretrain_drug_df = pd.read_csv(pretrain_drug_path)
-    pretrain_drug_df = pretrain_drug_df.drop_duplicates(subset=['drug1', 'drug2'], keep="last")
+    pretrain_drug_df = pretrain_drug_df.drop_duplicates(subset=['drug1', 'drug2', 'cell_line'], keep="last")
     # set samples number
     pretrain_drug_df = pretrain_drug_df.sample(n=100000, random_state=50)
     for s, r, m, n in zip(pretrain_drug_df['drug1'], pretrain_drug_df['drug2'], pretrain_drug_df['cell_line_number'], pretrain_drug_df['label']):

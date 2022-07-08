@@ -83,7 +83,7 @@ def creat_data(datafile, cell_path, smiles_path, drug_path):
     cell_line_dict = build_cell_line_dict(cell_path)
     drug_dict = drug_smiles_dict(smiles_path)
     pretrain_drug_df = pd.read_csv(datafile)
-    pretrain_drug_df = pretrain_drug_df.drop_duplicates(subset=['drug1', 'drug2'], keep="last")
+    pretrain_drug_df = pretrain_drug_df.drop_duplicates(subset=['drug1', 'drug2', 'cell_line'], keep="last")
     # set samples number
     pretrain_drug_df = pretrain_drug_df.sample(n=100000, random_state=50)
 
