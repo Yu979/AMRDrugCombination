@@ -8,6 +8,8 @@ from rdkit import Chem
 # from rdkit.Chem import MolFromSmiles
 import networkx as nx
 from utils_test import *
+import sys
+sys.path.append("..")
 from pretrain_data_process import *
 
 
