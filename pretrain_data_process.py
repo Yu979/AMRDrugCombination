@@ -2,11 +2,21 @@ import pandas as pd
 import numpy as np
 import re
 from keras.utils import to_categorical
+import json
 
 cell_path = './data/DATABASE/comb_data.csv'
 smiles_path = './data/CFfeature.npy'
 drug_path = './data/drug_feature.csv'
 pretrain_drug_path = './data/DATABASE/comb_data.csv'
+cell_name_path = './data/drugcomb_cell_lines.txt'
+CCLE_expression_path = './data/DATABASE/CCLE_gene_cn.csv'
+
+
+def find_cell_expression(name_path, expression_path):
+    with open(name_path, 'r') as cell_name:
+        df = pd.read_json(cell_name)
+        cell_name.close()
+
 
 def build_cell_line_dict(cell_path):
     drug_data = pd.read_csv(cell_path)
@@ -35,6 +45,7 @@ def build_pretrain_data(cell_line_dict, drug_dict, pretrain_drug_path):
     cell_line = []
     label = []
     pretrain_drug_df = pd.read_csv(pretrain_drug_path)
+    pretrain_drug_df = pretrain_drug_df.drop_duplicates(subset=['drug1', 'drug2'], keep="last")
     # set samples number
     pretrain_drug_df = pretrain_drug_df.sample(n=100000, random_state=50)
     for s, r, m, n in zip(pretrain_drug_df['drug1'], pretrain_drug_df['drug2'], pretrain_drug_df['cell_line_number'], pretrain_drug_df['label']):

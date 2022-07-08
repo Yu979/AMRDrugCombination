@@ -7,3 +7,4 @@ work_space
 *.pyc
 **/__pycache__
 model
+DeepDDS/data
