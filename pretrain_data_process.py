@@ -79,6 +79,12 @@ def build_pretrain_Xy(drug1_feature, drug2_feature, cell_line, label):
 
 
 if __name__ == '__main__':
+    # df = pd.read_csv('./data/drug_SMILES.csv')
+    # smiles = df['SMILES'].values
+    # drug = df['Drug'].values
+    # smiles_vec = dict(zip(drug, smiles))
+    # compound_iso_smiles = list(smiles_vec.values())
+    # compound_iso_smiles = set(compound_iso_smiles)
     cell_line_dict = build_cell_line_dict(cell_path)
     drug_dict = build_drug_dict(smiles_path, drug_path)
     drug1_feature, drug2_feature, cell_line, label = build_pretrain_data(cell_line_dict, drug_dict, pretrain_drug_path)
