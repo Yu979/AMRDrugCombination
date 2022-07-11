@@ -109,7 +109,7 @@ def creat_data(datafile, cell_path, smiles_path, drug_path):
     processed_data_file_train = './data/processed/pretrained_data_train.pt'
     if ((not os.path.isfile(processed_data_file_train))):
         df = pretrain_drug_df
-        drug1, drug2, cell, label = list(np.array(drug_dict[df['drug1'].values])), list(np.array(drug_dict[df['drug2'].values])), list(df['cell_line_number']), list(df['label'])
+        drug1, drug2, cell, label = list(drug_dict[aa] for aa in df[['drug1']]), list(drug_dict[aa] for aa in df['drug2']), list(df['cell_line_number']), list(df['label'])
         drug1, drug2, cell, label = np.asarray(drug1), np.asarray(drug2), np.asarray(to_categorical(cell, 2001)), np.asarray(label)
         # make data PyTorch Geometric ready
 
