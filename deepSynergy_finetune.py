@@ -11,6 +11,7 @@ from keras import backend
 from tensorflow.python.keras.backend import set_session
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
+from sklearn.metrics import classification_report
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0, 2" #specify GPU
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = "0"
@@ -155,6 +156,10 @@ def test(model, X_train, y_train, X_test, y_test):
     smooth_val_loss = np.pad(mov_av, int(average_over / 2), mode='edge')
     epo = np.argmin(smooth_val_loss)
     hist2 = model.fit(X_train, y_train, epochs=epo, shuffle=True, batch_size=64, validation_data=(X_test, y_test), steps_per_epoch=steps_per_epoch)
+    y_pre = model.predict(X_test)
+    y_in_class = np.rint(y_pre)
+    cr = classification_report(y_test, y_in_class)
+    print(cr)
     return hist2
 
 
