@@ -127,6 +127,13 @@ def split_finetune_data(finetune_x, finetune_y):
     return X_tr, X_test, X_val, y_tr, y_test, y_val
 
 
+def split_train_notest(finetune_x, finetune_y):
+    X_tr, y_tr = finetune_x[: 1650], finetune_y[: 1650]
+    X_test, y_test = finetune_x[1650: 2100], finetune_y[1650: 2100]
+    X_val, y_val = finetune_x[2100:], finetune_y[2100:]
+    return X_tr, X_test, X_val, y_tr, y_test, y_val
+
+
 def train(model, X_train, y_train, X_val, y_val):
     epochs = 100
     batch_size = 64
@@ -168,7 +175,8 @@ if __name__ == '__main__':
     combdata = build_finetune_combdata(finetune_data_path)
     singledata = build_finetune_singledata(finetune_data_path)
     X, y = build_finetune_xy(combdata, singledata, drug_dict)
-    X_train, X_test, X_val, y_train, y_test, y_val = split_finetune_data(X, y)
+    # X_train, X_test, X_val, y_train, y_test, y_val = split_finetune_data(X, y)
+    X_train, X_test, X_val, y_train, y_test, y_val = split_train_notest(X, y)
     pretrain_model = K.models.load_model('./model/NNpretrain.h5')
     for layer in pretrain_model.layers[:2]:
         layer.trainable = False
