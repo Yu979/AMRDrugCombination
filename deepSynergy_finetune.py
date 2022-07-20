@@ -135,7 +135,7 @@ def split_train_notest(finetune_x, finetune_y):
 
 
 def train(model, X_train, y_train, X_val, y_val):
-    epochs = 100
+    epochs = 1000
     batch_size = 64
     act_func = tf.nn.relu
     dropout = 0.5
