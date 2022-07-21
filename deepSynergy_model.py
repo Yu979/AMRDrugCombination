@@ -84,6 +84,13 @@ def build_cnn(X_tr):
     return model
 
 
+def expand_dim(X_train, X_test, X_val):
+    X_train = np.expand_dims(X_train, axis=2)
+    X_test = np.expand_dims(X_test, axis=2)
+    X_val = np.expand_dims(X_val, axis=2)
+
+    return X_train, X_test, X_val
+
 def train(model, X_train, y_train, X_val, y_val):
     layers = [8182, 4096, 1]
     epochs = 100
@@ -121,6 +128,7 @@ if __name__ == '__main__':
     X_train, X_test, X_val, y_train, y_test, y_val = build_dataset(X, y)
     del X, y
     # model = build_model(X_train)
+    X_train, X_test, X_val = expand_dim(X_train, X_test, X_val)
     model = build_cnn(X_train)
     hist_train = train(model, X_train, y_train, X_val, y_val)
     val_loss = hist_train.history['val_loss']
