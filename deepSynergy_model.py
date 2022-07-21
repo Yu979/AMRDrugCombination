@@ -74,9 +74,13 @@ def build_model(X_tr):
 
 
 def build_cnn(X_tr):
+    config = tf.compat.v1.ConfigProto(
+        allow_soft_placement=True,
+        gpu_options=tf.compat.v1.GPUOptions(allow_growth=True))
+    set_session(tf.compat.v1.Session(config=config))
     model = Sequential()
     model.add(Conv1D(filters=64, kernel_size=16,
-                     strides=1, padding='same', activation='relu', input_shape=(X_tr.shape[1],)))
+                     strides=1, padding='same', activation='relu', input_shape=(X_tr.shape[1],X_tr.shape[2])))
     model.add(MaxPooling1D(pool_size=5))
     model.add(LSTM(100, use_bias=True, dropout=0.1, return_sequences=False))
     model.add(Dense(3, activation='softmax'))
@@ -129,6 +133,7 @@ if __name__ == '__main__':
     del X, y
     # model = build_model(X_train)
     X_train, X_test, X_val = expand_dim(X_train, X_test, X_val)
+    print(X_train.shape[1])
     model = build_cnn(X_train)
     hist_train = train(model, X_train, y_train, X_val, y_val)
     val_loss = hist_train.history['val_loss']
