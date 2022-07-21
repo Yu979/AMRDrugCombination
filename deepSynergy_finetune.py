@@ -177,11 +177,12 @@ if __name__ == '__main__':
     X, y = build_finetune_xy(combdata, singledata, drug_dict)
     # X_train, X_test, X_val, y_train, y_test, y_val = split_finetune_data(X, y)
     X_train, X_test, X_val, y_train, y_test, y_val = split_train_notest(X, y)
-    pretrain_model = K.models.load_model('./model/NNpretrain.h5')
+    # pretrain_model = K.models.load_model('./model/NNpretrain.h5')
+    pretrain_model = K.models.load_model('./model/CNNpretrain.h5')
     for layer in pretrain_model.layers[:2]:
         layer.trainable = False
     eta = 0.001
-    pretrain_model.compile(loss='categorical_crossentropy', optimizer=K.optimizers.SGD(lr=float(eta), momentum=0.5), metrics=K.metrics.categorical_accuracy)
+    pretrain_model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=K.metrics.categorical_accuracy)
     hist_train = train(pretrain_model, X_train, y_train, X_val, y_val)
     val_loss = hist_train.history['val_loss']
     pretrain_model.reset_states()

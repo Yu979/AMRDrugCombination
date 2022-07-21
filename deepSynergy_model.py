@@ -11,7 +11,9 @@ import tensorflow as tf
 from keras import backend
 from tensorflow.python.keras.backend import set_session
 from keras.models import Sequential
-from keras.layers import Dense, Dropout
+from keras.layers import Dropout
+from keras.layers import Dense, Conv1D, MaxPooling1D
+from keras.layers import LSTM
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0, 2" #specify GPU
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = "0"
@@ -71,6 +73,16 @@ def build_model(X_tr):
     return model
 
 
+def build_cnn(X_tr):
+    model = Sequential()
+    model.add(Conv1D(filters=64, kernel_size=16,
+                     strides=1, padding='same', activation='relu', input_shape=X_tr.shape[1],))
+    model.add(MaxPooling1D(pool_size=5))
+    model.add(LSTM(100, use_bias=True, dropout=0.1, return_sequences=False))
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=K.metrics.categorical_accuracy)
+    return model
+
+
 def train(model, X_train, y_train, X_val, y_val):
     layers = [8182, 4096, 1]
     epochs = 100
@@ -107,10 +119,12 @@ if __name__ == '__main__':
     # for X, y in zip(np.array_split(X, 100), np.array_split(y, 100)):
     X_train, X_test, X_val, y_train, y_test, y_val = build_dataset(X, y)
     del X, y
-    model = build_model(X_train)
+    # model = build_model(X_train)
+    model = build_cnn(X_train)
     hist_train = train(model, X_train, y_train, X_val, y_val)
     val_loss = hist_train.history['val_loss']
     model.reset_states()
-    model.save('./model/NNpretrain.h5')
+    # model.save('./model/NNpretrain.h5')
+    model.save('./model/CNNpretrain.h5')
     hist_test = test(model, X_train, y_train, X_test, y_test)
     test_loss = hist_test.history['val_loss']
