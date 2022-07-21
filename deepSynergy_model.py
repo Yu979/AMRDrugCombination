@@ -76,9 +76,10 @@ def build_model(X_tr):
 def build_cnn(X_tr):
     model = Sequential()
     model.add(Conv1D(filters=64, kernel_size=16,
-                     strides=1, padding='same', activation='relu', input_shape=X_tr.shape[1],))
+                     strides=1, padding='same', activation='relu', input_shape=(X_tr.shape[1],)))
     model.add(MaxPooling1D(pool_size=5))
     model.add(LSTM(100, use_bias=True, dropout=0.1, return_sequences=False))
+    model.add(Dense(3, activation='softmax'))
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=K.metrics.categorical_accuracy)
     return model
 
