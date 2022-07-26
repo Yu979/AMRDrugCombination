@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import pickle
 from pretrain_data_process import *
+from deepSynergy_model import *
 import matplotlib.pyplot as plt
 import keras as K
 import tensorflow as tf
@@ -134,6 +135,42 @@ def split_train_notest(finetune_x, finetune_y):
     return X_tr, X_test, X_val, y_tr, y_test, y_val
 
 
+def split_strain_train_notest(finetune_x, finetune_y):
+    X_tr, y_tr = finetune_x[20: 2123], finetune_y[20: 2123]
+    X_test, y_test = finetune_x[2123: ], finetune_y[2123: ]
+    X_val, y_val = finetune_x[:20], finetune_y[:20]
+    return X_tr, X_test, X_val, y_tr, y_test, y_val
+
+
+def build_finetune_xy_split_strain(comb_data, single_data, drug_dic):
+    comb_data = pd.concat([single_data, comb_data])
+    comb_data = comb_data.sort_values("cell_line", ascending=True)
+    comb_data = comb_data.reset_index(drop=True)
+    drug1_features = []
+    drug2_features = []
+    cell_lines = []
+    labels = []
+
+    for s, r, m, n in zip(comb_data['drug1'], comb_data['drug2'], comb_data['cell_line'],
+                          comb_data['label']):
+        if (s in drug_dic) and (r in drug_dic):
+            drug1_features.append(drug_dict[s])
+            drug2_features.append(drug_dict[r])
+            cell_lines.append(m)
+            labels.append(n)
+        elif (s in drug_dic) and (r is np.nan):
+            drug1_features.append(drug_dict[s])
+            drug2_features.append(np.zeros(1024))
+            cell_lines.append(m)
+            labels.append(n)
+
+    cell_lines = to_categorical(cell_lines, 2001)
+    labels = to_categorical(labels, 3)
+    finetune_X = np.hstack((drug1_features, drug2_features, cell_lines))
+    finetune_Y = np.array(labels)
+    return finetune_X, finetune_Y
+
+
 def train(model, X_train, y_train, X_val, y_val):
     epochs = 1000
     batch_size = 64
@@ -174,9 +211,12 @@ if __name__ == '__main__':
     drug_dict = build_drug_dict(smiles_path, drug_path)
     combdata = build_finetune_combdata(finetune_data_path)
     singledata = build_finetune_singledata(finetune_data_path)
-    X, y = build_finetune_xy(combdata, singledata, drug_dict)
+    # X, y = build_finetune_xy(combdata, singledata, drug_dict)
+    X, y = build_finetune_xy_split_strain(combdata, singledata, drug_dict)
     # X_train, X_test, X_val, y_train, y_test, y_val = split_finetune_data(X, y)
-    X_train, X_test, X_val, y_train, y_test, y_val = split_train_notest(X, y)
+    # X_train, X_test, X_val, y_train, y_test, y_val = split_train_notest(X, y)
+    X_train, X_test, X_val, y_train, y_test, y_val = split_strain_train_notest(X, y)
+    X_train, X_test, X_val = expand_dim(X_train, X_test, X_val)
     # pretrain_model = K.models.load_model('./model/NNpretrain.h5')
     pretrain_model = K.models.load_model('./model/CNNpretrain.h5')
     for layer in pretrain_model.layers[:2]:
