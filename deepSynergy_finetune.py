@@ -14,7 +14,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from sklearn.metrics import classification_report
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0, 2" #specify GPU
+os.environ["CUDA_VISIBLE_DEVICES"] = "1" #specify GPU
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = "0"
 
 cell_path = './data/DATABASE/comb_data.csv'
@@ -171,6 +171,35 @@ def build_finetune_xy_split_strain(comb_data, single_data, drug_dic):
     return finetune_X, finetune_Y
 
 
+def build_finetune_xy_split_combination(comb_data, single_data, drug_dic):
+    comb_data = pd.concat([single_data, comb_data])
+    comb_data = comb_data.sort_values(by=["drug2"], ascending=True)
+    comb_data = comb_data.reset_index(drop=True)
+    drug1_features = []
+    drug2_features = []
+    cell_lines = []
+    labels = []
+
+    for s, r, m, n in zip(comb_data['drug1'], comb_data['drug2'], comb_data['cell_line'],
+                          comb_data['label']):
+        if (s in drug_dic) and (r in drug_dic):
+            drug1_features.append(drug_dict[s])
+            drug2_features.append(drug_dict[r])
+            cell_lines.append(m)
+            labels.append(n)
+        elif (s in drug_dic) and (r is np.nan):
+            drug1_features.append(drug_dict[s])
+            drug2_features.append(np.zeros(1024))
+            cell_lines.append(m)
+            labels.append(n)
+
+    cell_lines = to_categorical(cell_lines, 2001)
+    labels = to_categorical(labels, 3)
+    finetune_X = np.hstack((drug1_features, drug2_features, cell_lines))
+    finetune_Y = np.array(labels)
+    return finetune_X, finetune_Y
+
+
 def train(model, X_train, y_train, X_val, y_val):
     epochs = 1000
     batch_size = 64
@@ -228,3 +257,17 @@ if __name__ == '__main__':
     pretrain_model.reset_states()
     hist_test = test(pretrain_model, X_train, y_train, X_test, y_test)
     test_loss = hist_test.history['val_loss']
+
+    X_com, y_com = build_finetune_xy_split_combination(combdata, singledata, drug_dict)
+    X_train_com, X_test_com, X_val_com, y_train_com, y_test_com, y_val_com = split_train_notest(X, y)
+    X_train_com, X_test_com, X_val_com = expand_dim(X_train_com, X_test_com, X_val_com)
+    pretrain_model = K.models.load_model('./model/CNNpretrain.h5')
+    for layer in pretrain_model.layers[:2]:
+        layer.trainable = False
+    eta = 0.001
+    pretrain_model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=K.metrics.categorical_accuracy)
+    hist_train2 = train(pretrain_model, X_train_com, y_train_com, X_val_com, y_val_com)
+    val_loss2 = hist_train2.history['val_loss']
+    pretrain_model.reset_states()
+    hist_test2 = test(pretrain_model, X_train_com, y_train_com, X_test_com, y_test_com)
+    test_loss2 = hist_test2.history['val_loss']
