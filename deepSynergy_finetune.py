@@ -14,7 +14,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from sklearn.metrics import classification_report
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # specify GPU
+# os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # specify GPU
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = "0"
 
 cell_path = './data/DATABASE/comb_data.csv'
