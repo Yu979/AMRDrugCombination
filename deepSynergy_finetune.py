@@ -14,13 +14,14 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from sklearn.metrics import classification_report
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1" #specify GPU
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # specify GPU
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = "0"
 
 cell_path = './data/DATABASE/comb_data.csv'
 smiles_path = './data/CFfeature.npy'
 drug_path = './data/drug_feature.csv'
 finetune_data_path = './data/train_data.xlsx'
+nature_apply_path = './data/2nature_apply.xlsx'
 
 
 def build_finetune_combdata(combpath):
@@ -137,7 +138,7 @@ def split_train_notest(finetune_x, finetune_y):
 
 def split_strain_train_notest(finetune_x, finetune_y):
     X_tr, y_tr = finetune_x[20: 2123], finetune_y[20: 2123]
-    X_test, y_test = finetune_x[2123: ], finetune_y[2123: ]
+    X_test, y_test = finetune_x[2123:], finetune_y[2123:]
     X_val, y_val = finetune_x[:20], finetune_y[:20]
     return X_tr, X_test, X_val, y_tr, y_test, y_val
 
@@ -228,7 +229,8 @@ def test(model, X_train, y_train, X_test, y_test):
     mov_av = moving_average(np.array(val_loss), average_over)
     smooth_val_loss = np.pad(mov_av, int(average_over / 2), mode='edge')
     epo = np.argmin(smooth_val_loss)
-    hist2 = model.fit(X_train, y_train, epochs=epo, shuffle=True, batch_size=64, validation_data=(X_test, y_test), steps_per_epoch=steps_per_epoch)
+    hist2 = model.fit(X_train, y_train, epochs=epo, shuffle=True, batch_size=64, validation_data=(X_test, y_test),
+                      steps_per_epoch=steps_per_epoch)
     y_pre = model.predict(X_test)
     y_in_class = np.rint(y_pre)
     cr = classification_report(y_test, y_in_class)
@@ -236,11 +238,32 @@ def test(model, X_train, y_train, X_test, y_test):
     return hist2
 
 
+def build_nature_apply_data(nature_apply_path, drug_dic):
+    df = pd.read_excel(nature_apply_path)
+    drug1_features = []
+    drug2_features = []
+    cell_lines = []
+    labels = []
+    for s, r, m, n in zip(df['drug1'], df['drug2'], df['cell_line'],
+                          df['label']):
+        if (s in drug_dic) and (r in drug_dic):
+            drug1_features.append(drug_dict[s])
+            drug2_features.append(drug_dict[r])
+            cell_lines.append(m)
+            labels.append(n)
+    cell_lines = to_categorical(cell_lines, 2001)
+    labels = to_categorical(labels, 3)
+    nature_apply_X = np.hstack((drug1_features, drug2_features, cell_lines))
+    nature_apply_Y = np.array(labels)
+    return nature_apply_X, nature_apply_Y
+
+
 if __name__ == '__main__':
     drug_dict = build_drug_dict(smiles_path, drug_path)
     combdata = build_finetune_combdata(finetune_data_path)
     singledata = build_finetune_singledata(finetune_data_path)
     # X, y = build_finetune_xy(combdata, singledata, drug_dict)
+    nature_x, nature_y = build_nature_apply_data(nature_apply_path, drug_dict)
     X, y = build_finetune_xy_split_strain(combdata, singledata, drug_dict)
     # X_train, X_test, X_val, y_train, y_test, y_val = split_finetune_data(X, y)
     # X_train, X_test, X_val, y_train, y_test, y_val = split_train_notest(X, y)
@@ -271,3 +294,17 @@ if __name__ == '__main__':
     pretrain_model.reset_states()
     hist_test2 = test(pretrain_model, X_train_com, y_train_com, X_test_com, y_test_com)
     test_loss2 = hist_test2.history['val_loss']
+
+    pretrain_model = K.models.load_model('./model/CNNpretrain.h5')
+    for layer in pretrain_model.layers[:2]:
+        layer.trainable = False
+    eta = 0.001
+    pretrain_model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=K.metrics.categorical_accuracy)
+    steps_per_epoch = len(X_train) // 64
+    model.fit(X_train, y_train, epochs=1000, shuffle=True, batch_size=64,
+              steps_per_epoch=steps_per_epoch)
+    y_pre3 = model.predict(nature_x)
+    y_in_class3 = np.rint(y_pre3)
+    cr3 = classification_report(nature_y, y_in_class3)
+    print(cr3)
+    print('end')
