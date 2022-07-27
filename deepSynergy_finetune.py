@@ -202,7 +202,7 @@ def build_finetune_xy_split_combination(comb_data, single_data, drug_dic):
 
 
 def train(model, X_train, y_train, X_val, y_val):
-    epochs = 100
+    epochs = 1000
     batch_size = 64
     act_func = tf.nn.relu
     dropout = 0.5
@@ -301,7 +301,7 @@ if __name__ == '__main__':
     eta = 0.001
     pretrain_model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=K.metrics.categorical_accuracy)
     steps_per_epoch = len(X_train) // 64
-    model.fit(X_train, y_train, epochs=100, shuffle=True, batch_size=64,
+    model.fit(X_train, y_train, epochs=1000, shuffle=True, batch_size=64,
               steps_per_epoch=steps_per_epoch)
     y_pre3 = model.predict(nature_x)
     y_in_class3 = np.rint(y_pre3)
