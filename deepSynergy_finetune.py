@@ -302,9 +302,9 @@ if __name__ == '__main__':
     pretrain_model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=K.metrics.categorical_accuracy)
     steps_per_epoch = len(X_train) // 64
     X, y, _ = expand_dim(X, y, X_val)
-    model.fit(X, y, epochs=1000, shuffle=True, batch_size=64,
+    pretrain_model.fit(X, y, epochs=1000, shuffle=True, batch_size=64,
               steps_per_epoch=steps_per_epoch)
-    y_pre3 = model.predict(nature_x)
+    y_pre3 = pretrain_model.predict(nature_x)
     y_in_class3 = np.rint(y_pre3)
     cr3 = classification_report(nature_y, y_in_class3)
     print(cr3)
