@@ -130,15 +130,15 @@ def split_finetune_data(finetune_x, finetune_y):
 
 
 def split_train_notest(finetune_x, finetune_y):
-    X_tr, y_tr = finetune_x[: 1650], finetune_y[: 1650]
-    X_test, y_test = finetune_x[1650: 2100], finetune_y[1650: 2100]
-    X_val, y_val = finetune_x[2100:], finetune_y[2100:]
+    X_tr, y_tr = finetune_x[20: 1650], finetune_y[20: 1650]
+    X_test, y_test = finetune_x[1650:], finetune_y[1650:]
+    X_val, y_val = finetune_x[:20], finetune_y[:20]
     return X_tr, X_test, X_val, y_tr, y_test, y_val
 
 
 def split_strain_train_notest(finetune_x, finetune_y):
-    X_tr, y_tr = finetune_x[20: 2123], finetune_y[20: 2123]
-    X_test, y_test = finetune_x[2123:], finetune_y[2123:]
+    X_tr, y_tr = finetune_x[20: 1728], finetune_y[20: 1728]
+    X_test, y_test = finetune_x[1728:], finetune_y[1728:]
     X_val, y_val = finetune_x[:20], finetune_y[:20]
     return X_tr, X_test, X_val, y_tr, y_test, y_val
 
