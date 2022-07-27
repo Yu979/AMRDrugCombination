@@ -301,7 +301,8 @@ if __name__ == '__main__':
     eta = 0.001
     pretrain_model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=K.metrics.categorical_accuracy)
     steps_per_epoch = len(X_train) // 64
-    model.fit(X_train, y_train, epochs=1000, shuffle=True, batch_size=64,
+    X, y, _ = expand_dim(X, y, X_val)
+    model.fit(X, y, epochs=1000, shuffle=True, batch_size=64,
               steps_per_epoch=steps_per_epoch)
     y_pre3 = model.predict(nature_x)
     y_in_class3 = np.rint(y_pre3)
